@@ -1,0 +1,64 @@
+package src.BOJ_2014;
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
+
+
+// N번째 수를 갖고 있다가
+// N번째 수보다 작은게 들어오면 최신화하기
+public class BOJ_2014 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(in.readLine());
+
+        int K = Integer.parseInt(st.nextToken());
+        int N = Integer.parseInt(st.nextToken());
+
+        int[] arr = new int[K];
+        st = new StringTokenizer(in.readLine());
+        for(int i = 0; i<K; i++){
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+
+        TreeSet<Long> treeSet = new TreeSet<>();
+        treeSet.add(1L);
+        int pIdx = 0;
+
+        while(pIdx < K){
+            int prime = arr[pIdx];
+            long nextVal = treeSet.first();
+            while(nextVal * prime < Integer.MAX_VALUE){
+                if(treeSet.size() == N+1){
+                    long biggest = treeSet.last();
+                    if(biggest > nextVal * prime){
+                        treeSet.pollLast();
+                        treeSet.add(nextVal * prime);
+                        nextVal = treeSet.higher(nextVal);
+                    }
+                    else{
+                        break;
+                    }
+                }
+                else{
+                    treeSet.add(nextVal * prime);
+                    nextVal = treeSet.higher(nextVal);
+                }
+            }
+
+            pIdx++;
+        }
+
+        int idx = 0;
+        while(idx != N){
+            treeSet.pollFirst();
+            idx++;
+        }
+
+        System.out.println(treeSet.pollFirst());
+    }
+
+}
