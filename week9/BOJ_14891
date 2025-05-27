@@ -1,0 +1,137 @@
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Main {
+    // Queue에 넣은 Task(BFS)
+    static class Task{
+        int cogWheelNum;
+        int dir;
+        Task(int cogWheelNum, int dir){
+            this.cogWheelNum = cogWheelNum;
+            this.dir = dir;
+        }
+    }
+
+
+    // 톱니바퀴(Circular List)
+    static class CogWheel{
+
+        // 맨 위, 왼쪽, 오른쪽
+        Cog head;
+        Cog left;
+        Cog right;
+        CogWheel(String input){
+            head = new Cog(input.charAt(0) - '0');
+            Cog cur = head;
+            for(int i = 1 ;i<8; i++){
+                Cog newCog = new Cog(input.charAt(i) - '0');
+                newCog.left = cur;
+                cur.right = newCog;
+                cur = newCog;
+
+                if(i == 6){
+                    left = newCog;
+                }
+
+                if(i == 2){
+                    right = newCog;
+                }
+            }
+            cur.right = head;
+            head.left = cur;
+
+
+        }
+
+        // 왼쪽으로 이동 -> 톱니들이 반대로 이동
+        void turnLeft(){
+            this.head = this.head.right;
+            this.left = this.left.right;
+            this.right = this.right.right;
+        }
+
+        // 오른쪽으로 이동 -> 톱니들이 반대로 이동
+        void turnRight(){
+            this.head = this.head.left;
+            this.left = this.left.left;
+            this.right = this.right.left;
+        }
+
+        // 디버깅을 위한 프린트함수
+        void print(){
+            int num = 0;
+            for(Cog cur = head; num < 8; num++, cur= cur.right){
+                System.out.print(cur.data);
+            }
+            System.out.println();
+        }
+    }
+
+    // 톱니(node)
+    static class Cog{
+        int data;
+        Cog left;
+        Cog right;
+        Cog(int data){
+            this.data = data;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        CogWheel[] cogWheels = new CogWheel[5];
+        for(int i = 1; i<=4; i ++) {
+            String input = in.readLine();
+            CogWheel cogWheel = new CogWheel(input);
+            cogWheels[i] = cogWheel;
+        }
+
+
+        int N = Integer.parseInt(in.readLine());
+        for(int i = 0; i<N; i++){
+            StringTokenizer st= new StringTokenizer(in.readLine());
+            int cogWheelNum = Integer.parseInt(st.nextToken());
+            int dir = Integer.parseInt(st.nextToken());
+
+            // BFS 방식을 활용
+            Queue<Task> queue = new ArrayDeque<>();
+            queue.add(new Task(cogWheelNum,dir));
+
+            // 다시 돌아오는 것 방지 위한 visit
+            boolean[] visited = new boolean[5];
+            while(!queue.isEmpty()){
+                Task cur = queue.poll();
+                visited[cur.cogWheelNum] = true;
+
+                // 맨 끝이 아니면서, 왼쪽을 visit하지 않았으면서, 왼쪽과 현재 톱니가 반대인 경우 움직이기 -> 방향은 현재 방향의 반대
+                if(cur.cogWheelNum != 1 && !visited[cur.cogWheelNum-1] && cogWheels[cur.cogWheelNum-1].right.data != cogWheels[cur.cogWheelNum].left.data){
+                    queue.add(new Task(cur.cogWheelNum-1, -cur.dir));
+                }
+
+                // 위와 동일
+                if(cur.cogWheelNum != 4 && !visited[cur.cogWheelNum+1] && cogWheels[cur.cogWheelNum+1].left.data != cogWheels[cur.cogWheelNum].right.data){
+                    queue.add(new Task(cur.cogWheelNum+1, -cur.dir));
+                }
+
+                if(cur.dir == -1){
+                    cogWheels[cur.cogWheelNum].turnLeft();
+                }
+                else{
+                    cogWheels[cur.cogWheelNum].turnRight();
+                }
+            }
+        }
+
+        // head가 1이면 점수에 추가
+        int ans = 0;
+        for(int i = 1; i<=4; i++){
+            ans += (cogWheels[i].head.data == 1) ? (1<<(i-1)) : 0;
+        }
+        System.out.println(ans);
+    }
+}
