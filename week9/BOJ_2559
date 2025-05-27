@@ -1,0 +1,43 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+// prefix sum을 구하여 주어진 길이의 구간 합 중 최대를 구한다.
+public class Main {
+    static final int NEG_INF = -987654321;
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(in.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(st.nextToken());
+
+        st = new StringTokenizer(in.readLine());
+
+        int[] arr = new int[N];
+        for(int i = 0 ; i < N; i++){
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+
+        int[] prefixSum = new int[N-K+1];
+        Arrays.fill(prefixSum,NEG_INF);
+
+        int initSum = 0;
+        for(int i = 0; i<K; i++){
+            initSum += arr[i];
+        }
+
+        prefixSum[0] = initSum;
+        for(int i = K, j = 1; i < N; i++, j++){
+            prefixSum[j] = prefixSum[j-1] - arr[j-1] + arr[i];
+        }
+
+        int max = NEG_INF;
+        for(int i = 0 ; i<=N-K; i++){
+            max= Math.max(max, prefixSum[i]);
+        }
+
+        System.out.println(max);
+    }
+}
