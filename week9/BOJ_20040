@@ -1,0 +1,53 @@
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(in.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        // union find를 매 input마다 진행하고
+        // 같은 find값이면 리턴
+
+        int[] parents = new int[n+1];
+        for(int i = 1; i<=n; i++)
+            parents[i] = i;
+
+        int cnt = 0;
+        for(int i = 0; i<m; i++){
+            st = new StringTokenizer(in.readLine());
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            cnt++;
+
+            if(find(from,parents) == find(to,parents)){
+                System.out.println(cnt);
+                return;
+            }
+
+            union(from,to,parents);
+        }
+        System.out.println(0);
+    }
+
+    private static void union(int from, int to, int[] parents) {
+        int fp = find(from,parents);
+        int tp = find(to,parents);
+
+        if (fp < tp)
+            parents[tp] = fp;
+        else
+            parents[fp] = tp;
+    }
+
+    private static int find(int from, int[] parents) {
+        if(from == parents[from])
+            return from;
+        return parents[from] = find(parents[from],parents);
+    }
+}
