@@ -1,0 +1,52 @@
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int N;
+    static int[] sour;
+    static int[] bitter;
+    static int minDif = 1_000_000_001;
+
+    public static void main(String[] args) throws IOException {
+        // 백트래킹 2^10개 조합을 모두 다 해보기.
+        getInput();
+        solve();
+    }
+
+    private static void solve() {
+        // 비트마스킹을 활용한 visit처리 하려고 했으나 visit이 필요가 없음
+        backTracking(0, 1, 0);
+
+        System.out.println(minDif);
+    }
+
+    private static void backTracking(int idx, int sourMul, int bitterSum) {
+        if (idx == N) {
+            if (bitterSum == 0)
+                return;
+            minDif = Math.min(minDif, Math.abs(sourMul - bitterSum));
+            return;
+        }
+
+        // 포함 한거
+        backTracking(idx + 1, sourMul * sour[idx], bitterSum + bitter[idx]);
+
+        // 포함 안한거
+        backTracking(idx + 1, sourMul, bitterSum);
+    }
+
+    private static void getInput() throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(in.readLine());
+        sour = new int[N];
+        bitter = new int[N];
+        for (int i = 0; i < N; i++) {
+            StringTokenizer st = new StringTokenizer(in.readLine());
+            sour[i] = Integer.parseInt(st.nextToken());
+            bitter[i] = Integer.parseInt(st.nextToken());
+        }
+    }
+}
