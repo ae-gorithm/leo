@@ -1,0 +1,52 @@
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class Main {
+    private static int N;
+    private static int[] arr;
+
+    public static void main(String[] args) {
+        getInput();
+        solve();
+    }
+
+    private static void solve() {
+        // lisArr[i] := i번째 원소를 "포함했을 때" lis의 최댓값
+        int[] lisArr = new int[N];
+        lisArr[0] = arr[0];
+
+        for(int i = 1; i<N; i++){
+            // i번째 원소는 무조건 포함
+            int maxVal = arr[i];
+            for(int j = i-1; j>=0; j--){
+                maxVal = Math.max(maxVal,(arr[j] < arr[i]) ? lisArr[j] + arr[i] : 0);
+            }
+            lisArr[i] = maxVal;
+        }
+
+        int maxLis = 0;
+        for(int i = 0; i<N; i++)
+            maxLis = Math.max(maxLis, lisArr[i]);
+
+        System.out.println(maxLis);
+    }
+
+    private static void getInput() {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        try {
+            N = Integer.parseInt(in.readLine());
+            st = new StringTokenizer(in.readLine());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        arr = new int[N];
+        for(int i = 0; i<N; i++){
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+    }
+}
