@@ -1,0 +1,42 @@
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class Main {
+    // 2차원 dp를 쓰는게 정석이지만
+    // 이 경우는 1차원 dp를 써도 된다.
+    // dp[0] -> dp[w] -> dp[2w] 이렇게 전이되는게 문제이지만
+    // 이걸 역순으로 훑으면 문제가 생기지 않는다.
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(in.readLine());
+
+        int N = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(st.nextToken());
+
+        // -1은 아직 채워진 적 없는 것을 의미
+        // dp[i] := i의 무게만큼 채운 value의 최적값
+        int[] dp = new int[K+1];
+        Arrays.fill(dp, -1);
+        dp[0] = 0;
+
+        int maxValue = 0;
+        for(int i = 0; i<N; i++){
+            st = new StringTokenizer(in.readLine());
+            int w = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+
+            for(int weight = K; weight >= w; weight--){
+                if(dp[weight - w] != -1){
+                    dp[weight] = Math.max(dp[weight], dp[weight - w] + v);
+                    maxValue = Math.max(dp[weight], maxValue);
+                }
+            }
+        }
+
+        System.out.println(maxValue);
+    }
+}
