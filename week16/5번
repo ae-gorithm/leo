@@ -1,0 +1,53 @@
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int[] dr = {-1, 1, 0, 0};
+    static int[] dc = {0, 0, -1, 1};
+    static int ans = 0;
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(in.readLine());
+        int R = Integer.parseInt(st.nextToken());
+        int C = Integer.parseInt(st.nextToken());
+
+        char[][] map = new char[R][C];
+        for (int i = 0; i < R; i++) {
+            String input = in.readLine();
+            for (int j = 0; j < C; j++) {
+                map[i][j] = input.charAt(j);
+            }
+        }
+        boolean[][] visited = new boolean[R][C];
+
+        // 비트마스킹 + dfs
+        // BFS의 최대 가지수 -> 40C20 이상 -> 이미 Integer Max 넘음 -> 불가능 -> 게다가 visited 여부를 400개의 요소로 저장해야함
+        dfs(0,0,map, visited, 1<<(map[0][0] - 'A'), 1);
+
+        System.out.println(ans);
+    }
+
+    private static void dfs(int r, int c, char[][] map, boolean[][] visited, int visitChar, int charCnt) {
+        visited[r][c] = true;
+        ans = Math.max(charCnt, ans);
+        for(int d = 0; d<4; d++){
+            int nr = r + dr[d];
+            int nc = c + dc[d];
+
+            if(nr < 0 || nc < 0 || nr >= map.length || nc >= map[0].length)
+                continue;
+
+            if((visitChar & (1<<(map[nr][nc] - 'A'))) != 0)
+                continue;
+
+            dfs(nr,nc,map,visited,visitChar | (1<<(map[nr][nc] - 'A')), charCnt+1);
+        }
+
+        visited[r][c] = false;
+    }
+}
