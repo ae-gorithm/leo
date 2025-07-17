@@ -1,0 +1,37 @@
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Stack;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(in.readLine());
+
+        int N = Integer.parseInt(st.nextToken());
+        int P = Integer.parseInt(st.nextToken());
+
+        Stack<Integer>[] stack = new Stack[7];
+        for(int i = 1; i<=6; i++)
+            stack[i] = new Stack<>();
+
+        int fingerCnt = 0;
+        for(int i = 0; i<N; i++){
+            st = new StringTokenizer(in.readLine());
+            int guitar = Integer.parseInt(st.nextToken());
+            int pret = Integer.parseInt(st.nextToken());
+            while(!stack[guitar].isEmpty() && stack[guitar].peek() > pret){
+                stack[guitar].pop();
+                fingerCnt++;
+            }
+            if(stack[guitar].isEmpty() || stack[guitar].peek() < pret) {
+                stack[guitar].push(pret);
+                fingerCnt++;
+            }
+        }
+
+        System.out.println(fingerCnt);
+    }
+}
